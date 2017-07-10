@@ -2,7 +2,6 @@ package com.jh.test;
 
 import com.jh.tools.*;
 import com.jh.tools.diff_match_patch.*;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -11,10 +10,10 @@ import java.util.LinkedList;
  * Created by jianghe on 2017/7/7.
  */
 public class DiffTest {
-    public static String oldPath = "C:\\Users\\jianghe\\Desktop\\bundle\\old\\";
-    public static String newPath = "C:\\Users\\jianghe\\Desktop\\bundle\\new\\";
-    public static String diffPath = "C:\\Users\\jianghe\\Desktop\\bundle\\diff\\diff.pat";
-    public static String diffZip = "C:\\Users\\jianghe\\Desktop\\bundle\\diff\\jj.zip";
+    public static String oldPath = "C:\\Users\\Admin\\Desktop\\bundle\\old\\";
+    public static String newPath = "C:\\Users\\Admin\\Desktop\\bundle\\new\\";
+    public static String diffPath = "C:\\Users\\Admin\\Desktop\\bundle\\diff\\diff.pat";
+    public static String diffZip = "C:\\Users\\Admin\\Desktop\\bundle\\diff\\jj.zip";
     public static String bundleName = "index.android.bundle";
 
     public static void main(String[] arg) {
