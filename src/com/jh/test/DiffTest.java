@@ -20,7 +20,6 @@ public class DiffTest {
     public static String diffZip = System.getProperty("user.dir") + "/bundle/diff/zip/";
 
     public static void main(String[] arg) {
-        System.out.println(1);
         String o = FileUtils.getFileString(path + oldname);
         String n = FileUtils.getFileString(path + newname);
         // 对比
