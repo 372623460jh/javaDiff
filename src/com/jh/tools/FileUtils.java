@@ -7,6 +7,7 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -220,30 +221,106 @@ public class FileUtils {
 
 
     /**
-     * 初始化文件（存在删除，不存在检查父路径是否存在）
+     * 初始化文件路径如果文件存在就根据overlay是否删除，如果文件不存在就创建文件所在目录
      *
-     * @param path
+     * @param path    初始化扥文件路径
+     * @param overlay 当文件存在时是否删除
+     * @return boolean 初始化目录是否成功
      */
-
-    public static void initFile(String path) {
+    public static boolean initFile(String path, boolean overlay) {
         try {
             // 判断目标文件是否存在
             File destFile = new File(path);
-            if (!destFile.exists()) {
+            if (destFile.exists()) {
+                // 如果目标文件存在，而且复制时允许覆盖。
+                if (overlay) {
+                    // 删除已存在的目标文件，无论目标文件是目录还是单个文件
+                    System.out.println("目标文件已存在，删除它！");
+                    if (!FileUtils.deleteFile(path)) {
+                        System.out.println("删除目标文件" + path + "失败！");
+                        return false;
+                    }
+                } else {
+                    System.out.println("目标文件" + path + "已存在！");
+                    return false;
+                }
+            } else {
                 if (!destFile.getParentFile().exists()) {
                     // 如果目标文件所在的目录不存在，则创建目录
                     if (!destFile.getParentFile().mkdirs()) {
-                        throw new Exception("创建目标文件所在的目录失败,是否申请读写权限");
+                        System.out.println("创建目标文件所在的目录失败！");
+                        return false;
                     }
-                }
-            } else {
-                // 删除已存在的目标文件，无论目标文件是目录还是单个文件
-                if (!FileUtils.deleteFile(path)) {
-                    throw new Exception("删除目标文件" + path + "失败！");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return true;
+    }
+
+    /**
+     * 将存放在sourceFilePath目录下的源文件，打包成fileName名称的zip文件，并存放到zipFilePath路径下
+     * @param sourceFilePath :待压缩的文件路径
+     * @param zipFilePath :压缩后存放路径
+     * @param fileName :压缩后文件的名称
+     * @return
+     */
+    public static boolean fileToZip(String sourceFilePath,String zipFilePath,String fileName){
+        boolean flag = false;
+        File sourceFile = new File(sourceFilePath);
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        FileOutputStream fos = null;
+        ZipOutputStream zos = null;
+
+        if(sourceFile.exists() == false){
+            System.out.println("待压缩的文件目录："+sourceFilePath+"不存在.");
+        }else{
+            try {
+                File zipFile = new File(zipFilePath + "/" + fileName +".zip");
+                if(zipFile.exists()){
+                    System.out.println(zipFilePath + "目录下存在名字为:" + fileName +".zip" +"打包文件.");
+                }else{
+                    File[] sourceFiles = sourceFile.listFiles();
+                    if(null == sourceFiles || sourceFiles.length<1){
+                        System.out.println("待压缩的文件目录：" + sourceFilePath + "里面不存在文件，无需压缩.");
+                    }else{
+                        fos = new FileOutputStream(zipFile);
+                        zos = new ZipOutputStream(new BufferedOutputStream(fos));
+                        byte[] bufs = new byte[1024*10];
+                        for(int i=0;i<sourceFiles.length;i++){
+                            //创建ZIP实体，并添加进压缩包
+                            ZipEntry zipEntry = new ZipEntry(sourceFiles[i].getName());
+                            zos.putNextEntry(zipEntry);
+                            //读取待压缩的文件并写进压缩包里
+                            fis = new FileInputStream(sourceFiles[i]);
+                            bis = new BufferedInputStream(fis, 1024*10);
+                            int read = 0;
+                            while((read=bis.read(bufs, 0, 1024*10)) != -1){
+                                zos.write(bufs,0,read);
+                            }
+                        }
+                        flag = true;
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } finally{
+                //关闭流
+                try {
+                    if(null != bis) bis.close();
+                    if(null != zos) zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return flag;
     }
 }
