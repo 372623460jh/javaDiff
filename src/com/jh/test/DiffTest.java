@@ -12,8 +12,8 @@ import java.util.LinkedList;
  */
 public class DiffTest {
     public static String zipname = "jianghe" + System.currentTimeMillis() + ".zip";
-    public static String oldname = "index.android3.bundle";
-    public static String newname = "index.android4.bundle";
+    public static String oldname = "index.android11.bundle";
+    public static String newname = "index.android12.bundle";
     public static String path = System.getProperty("user.dir") + "/bundle/file/";
     public static String diffPath = System.getProperty("user.dir") + "/bundle/diff/yasuo/jianghe/diff.pat";
     public static String zipFile = System.getProperty("user.dir") + "/bundle/diff/yasuo";
@@ -44,5 +44,6 @@ public class DiffTest {
         System.out.println("新文件MD5：" + FileUtils.getMd5ByFile(path + newname));
         System.out.println("老文件MD5：" + FileUtils.getMd5ByFile(path + oldname));
         System.out.println("差异压缩包MD5：" + FileUtils.getMd5ByFile(diffZip + zipname));
+
     }
 }
